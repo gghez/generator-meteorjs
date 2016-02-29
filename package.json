@@ -1,0 +1,30 @@
+{
+  "name": "generator-meteorjs",
+  "version": "1.0.0",
+  "description": "Yeoman generator for MeteorJS application or package.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gghez/generator-meteorjs.git"
+  },
+  "keywords": [
+    "meteor",
+    "generator",
+    "yeoman",
+    "package",
+    "app",
+    "yeoman-generator"
+  ],
+  "author": "gghez",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gghez/generator-meteorjs/issues"
+  },
+  "homepage": "https://github.com/gghez/generator-meteorjs#readme",
+  "dependencies": {
+    "yeoman-generator": "^0.22.5"
+  }
+}

@@ -6,6 +6,7 @@ var generators = require('yeoman-generator'),
     chalk = require('chalk');
 
 module.exports = generators.Base.extend({
+    
     constructor: function(){
 	generators.Base.apply(this, arguments);
 
@@ -18,6 +19,7 @@ module.exports = generators.Base.extend({
 	this.scriptSuffix = this.options.coffee ? '.coffee' : '.js';
 	this.appName = this.name || process.cwd().split(path.sep).pop();
     },
+    
     initializing: function(){
 	if (fs.existsSync('./package.js')){
 	    this.env.error(chalk.bold.red('Cannot configure a Meteor application inside a package directory.'));
@@ -27,11 +29,14 @@ module.exports = generators.Base.extend({
 	    this.env.error(chalk.bold.red('Cannot configure a Meteor application inside another.'));
 	}
     },
+    
     configuring: {
+	
 	app: function(){
 	    this.log(chalk.bold.yellow('Configuring application:'), chalk.bold.white(this.appName));		
 	    this.spawnCommandSync('meteor', ['create', this.name || '.']);
 	},
+	
 	package: function(){
 	    if (!this.options.packages) return;
 
@@ -52,8 +57,10 @@ module.exports = generators.Base.extend({
 	    
 	}
     },
+    
     end: function(){
 	this.log(chalk.bold.yellow('MeteorJS Generator complete.'));
     }
+    
 });
 

@@ -1,10 +1,8 @@
 # generator-meteorjs
-==============
 
 Yeoman generator for MeteorJS application and packages.
 
 ## Prerequisites
-----------------
 
 * [nodejs](http://nodejs.com)
 * [yeoman](http://yeoman.io)

@@ -6,6 +6,15 @@ var generators = require('yeoman-generator'),
     chalk = require('chalk'),
     _ = require('underscore');
 
+var MeteorJSGenerator = generators.Base.extend({
+    fail: function(msg){
+	this.env.error(chalk.bold.red(msg));
+    },
+    step: function(name){
+	this.log(chalk.bold.yellow(name));
+    }
+});
+
 module.exports = generators.Base.extend({
     
     constructor: function(){

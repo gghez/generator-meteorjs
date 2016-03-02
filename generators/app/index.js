@@ -11,7 +11,7 @@ module.exports = generators.Base.extend({
     constructor: function(){
 	generators.Base.apply(this, arguments);
 
-	this.argument('name', {desc: 'Application or package name.', required: false, type: String});
+	this.argument('name', {desc: 'Application name to create or nothing for in-place creation.', required: false, type: String});
 
 	this.option('packages', {desc: 'Create packages inside application.', type: String});
 	this.option('coffee', {desc: 'Generate CoffeeScript instead of Javascript.'});

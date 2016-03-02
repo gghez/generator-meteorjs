@@ -43,17 +43,43 @@ $ meteor
 
 ## Features
 
-TODO
+Create a MeteorJS application from scratch based on command line options and answers to prompted questions.
+
+Options are:
+
+- `--coffee` for CoffeeScript language support
+- `--verbose` to activate debug traces
+- `--packages list,of,pkg` to create empty packages inside the application.
+
+Questions are:
+
+- Remove default packages (insecure, autopublish)
+- Accounts related packages (accounts-password, accounts-facebook...)
+- Application styles generator (LESS, SCSS or nothing)
+- FlowRouter support Y/n (no iron-router support for now)
 
 ## Structure
 
-### Application
+When this script is called: `yo meteorjs myblog --packages reader,writer,core`
 
-TODO
+This structure is created:
 
-### Package
+```
+/ myblog
+.../ .meteor
+.../ packages
+   .../reader
+      .../ package.js
+      .../ core.js
+      .../ core-tests.js
+      .../ README.md
+   .../writer (same as reader)
+   .../core (same as reader)
+.../ myblog.css
+.../ myblog.js
+.../ myblog.html
 
-TODO
+```
 
 ## License
 

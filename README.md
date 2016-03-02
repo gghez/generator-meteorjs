@@ -17,7 +17,7 @@ $ npm install -g yo
 
 ### Install
 
-To install generator-meteor from npm, run:
+To install generator-meteorjs from npm, run:
 
 ```
 $ npm install -g generator-meteorjs
@@ -32,7 +32,7 @@ $ mkdir your-new-project && cd $_
 Initiate the generator:
 
 ```
-$ yo meteorjs
+$ yo meteorjs myblog --coffee --packages reader,writer,core
 ```
 
 Finally, run Meteor:
@@ -58,3 +58,10 @@ TODO
 ## License
 
 [MIT License](http://en.wikipedia.org/wiki/MIT_License)
+
+## TODO
+
+Sub commands to implement:
+
+- meteorjs:add-route
+- meteorjs:add-collection

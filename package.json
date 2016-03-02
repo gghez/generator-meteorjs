@@ -1,7 +1,7 @@
 {
   "name": "generator-meteorjs",
-  "version": "1.0.0",
-  "description": "Yeoman generator for MeteorJS application or package.",
+  "version": "0.0.1",
+  "description": "Yeoman generator for MeteorJS application and package.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -25,9 +25,7 @@
   },
   "homepage": "https://github.com/gghez/generator-meteorjs#readme",
   "dependencies": {
-    "bluebird": "^3.3.3",
     "chalk": "^1.1.1",
-    "q": "^1.4.1",
     "underscore": "^1.8.3",
     "yeoman-generator": "^0.22.5"
   },

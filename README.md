@@ -89,3 +89,4 @@ Sub commands to implement:
 
 - meteorjs:add-route
 - meteorjs:add-collection
+

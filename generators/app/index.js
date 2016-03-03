@@ -3,24 +3,19 @@ var generators = require('yeoman-generator'),
     Promise = require('bluebird'),
     fsAsync = Promise.promisifyAll(fs),
     path = require('path'),
-    chalk = require('chalk'),
+    MeteorJSGenerator = require('../generator-base'),
     _ = require('underscore');
 
-var MeteorJSGenerator = generators.Base.extend({
-    fail: function(msg){
-	this.env.error(chalk.bold.red(msg));
-    },
-    step: function(name){
-	this.log(chalk.bold.yellow(name));
-    }
-});
-
-module.exports = generators.Base.extend({
+module.exports = MeteorJSGenerator.extend({
     
     constructor: function(){
 	generators.Base.apply(this, arguments);
 
-	this.argument('name', {desc: 'Application name to create or nothing for in-place creation.', required: false, type: String});
+	this.argument('name', {
+	    desc: 'Application name to create or nothing for in-place creation.',
+	    required: false,
+	    type: String
+	});
 
 	this.option('packages', {desc: 'Create packages inside application.', type: String});
 	this.option('coffee', {desc: 'Generate CoffeeScript instead of Javascript.'});
@@ -35,11 +30,11 @@ module.exports = generators.Base.extend({
     
     initializing: function(){
 	if (fs.existsSync('./package.js')){
-	    this.env.error(chalk.bold.red('Cannot configure a Meteor application inside a package directory.'));
+	    this.fail('Cannot configure a Meteor application inside a package directory.');
 	}
 
 	if ((!this.name && fs.existsSync('.meteor')) || (this.name && fs.existsSync(path.join(this.name, '.meteor')))){
-	    this.env.error(chalk.bold.red('Cannot configure a Meteor application inside another.'));
+	    this.fail('Cannot configure a Meteor application inside another.');
 	}
     },
 
@@ -94,10 +89,7 @@ module.exports = generators.Base.extend({
 	ask: function(){
 	    var done = this.async();
 	    this.prompt(this.questions, (answers) => {
-		if (this.options.verbose){
-		    this.log(chalk.cyan('Answers:'), JSON.stringify(answers));
-		}
-		
+		this.debug('Answers:', JSON.stringify(answers));		
 		_.assign(this.should, answers);
 		done();
 	    });
@@ -107,7 +99,7 @@ module.exports = generators.Base.extend({
     configuring: {
 	
 	app: function(){
-	    this.log(chalk.bold.yellow('Configuring application:'), chalk.bold.white(this.appName));		
+	    this.step1('Configuring application', this.appName);
 	    this.spawnCommandSync('meteor', ['create', this.name || '.']);
 	},
 	
@@ -123,7 +115,7 @@ module.exports = generators.Base.extend({
 		if (fs.existsSync('packages/' + p)){
 		    this.log('Package', chalk.green(p), 'already configured.');
 		} else {
-		    this.log(chalk.yellow('Configuring package:'), chalk.white(p));
+		    this.step2('Configuring package', p);
 		    
 		    this.spawnCommandSync('meteor', ['create', '--package', p]);
 		}
@@ -133,14 +125,14 @@ module.exports = generators.Base.extend({
 
 	scripting: function(){
 	    if (this.options.coffee){
-		this.log(chalk.bold.yellow('CoffeeScript support'));
+		this.step1('CoffeeScript support');
 		this.spawnCommandSync('meteor', ['add', 'coffeescript']);
 	    }
 	},
 
 	remove_defaults: function(){
 	    if (this.should.remove_defaults.length){
-		this.log(chalk.bold.yellow('Remove defaults'));
+		this.step1('Remove default packages');
 		this.spawnCommandSync('meteor', ['remove'].concat(this.should.remove_defaults));
 	    }
 	},
@@ -150,7 +142,7 @@ module.exports = generators.Base.extend({
 	    case '<none>':
 		break;
 	    default:
-		this.log(chalk.bold.yellow('Application styles generator:'), chalk.bold.white(this.should.styles));
+		this.step1('Application styles generator is', this.should.styles);
 		this.spawnCommandSync('meteor', ['add', this.should.styles]);
 		break;
 	    }
@@ -158,21 +150,21 @@ module.exports = generators.Base.extend({
 
 	accounts: function(){
 	    if (this.should.accounts.length){
-		this.log(chalk.bold.yellow('Accounts configuration'));
+		this.step1('Accounts configuration');
 		this.spawnCommandSync('meteor', ['add'].concat(this.should.accounts));
 	    }	    
 	},
 
 	router: function(){
 	    if (this.should.flowrouter){
-		this.log(chalk.bold.yellow('Router configuration'));
+		this.step1('Router configuration');
 		this.spawnCommandSync('meteor', ['add', 'kadira:flow-router', 'kadira:blaze-layout']);
 	    }
 	}
     },
     
     end: function(){
-	this.log(chalk.bold.yellow('MeteorJS Generator complete.'));
+	this.step1('MeteorJS Generator complete.');
     }
     
 });

@@ -36,12 +36,22 @@ $ yo meteorjs myblog --coffee --packages reader,writer,core
 Finally, run Meteor:
 
 ```
+$ cd myblog
 $ meteor
 ```
 
 ## Features
 
 Create a MeteorJS application from scratch based on command line options and answers to prompted questions.
+
+```
+yo meteorjs --help
+```
+
+Arguments:
+
+- `name` when specified generate projet in a new sub-directory named as is.
+
 
 Options are:
 

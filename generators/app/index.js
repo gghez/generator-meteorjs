@@ -1,10 +1,8 @@
 var generators = require('yeoman-generator'),
-    fs = require('fs'),
-    Promise = require('bluebird'),
-    fsAsync = Promise.promisifyAll(fs),
     path = require('path'),
     MeteorJSGenerator = require('../generator-base'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    fs = require('fs');
 
 module.exports = MeteorJSGenerator.extend({
     
@@ -23,17 +21,21 @@ module.exports = MeteorJSGenerator.extend({
 
 	this.scriptSuffix = this.options.coffee ? '.coffee' : '.js';
 	this.appName = this.name || process.cwd().split(path.sep).pop();
+	if (this.name) {
+	    fs.mkdirSync(this.name);
+	    this.destinationRoot(this.name);
+	}
 
 	this.should = {};
 	this.questions = [];
     },
     
     initializing: function(){
-	if (fs.existsSync('./package.js')){
+	if (this.fs.exists('package.js')){
 	    this.fail('Cannot configure a Meteor application inside a package directory.');
 	}
 
-	if ((!this.name && fs.existsSync('.meteor')) || (this.name && fs.existsSync(path.join(this.name, '.meteor')))){
+	if ((!this.name && this.fs.exists('.meteor')) || (this.name && this.fs.exists(path.join(this.name, '.meteor')))){
 	    this.fail('Cannot configure a Meteor application inside another.');
 	}
     },

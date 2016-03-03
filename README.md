@@ -54,7 +54,9 @@ Questions are:
 - Remove default packages (insecure, autopublish)
 - Accounts related packages (accounts-password, accounts-facebook...)
 - Application styles generator (LESS, SCSS or nothing)
-- FlowRouter support Y/n (no iron-router support for now)
+- Add application router Y/n (no iron-router support for now)
+
+> Answers to questions are stored for next execution then you won't have my defaults a second time ^^
 
 ## Structure
 

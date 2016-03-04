@@ -26,6 +26,7 @@
   "homepage": "https://github.com/gghez/generator-meteorjs#readme",
   "dependencies": {
     "chalk": "^1.1.1",
+    "ejs": "^2.4.1",
     "underscore": "^1.8.3",
     "yeoman-generator": "^0.22.5"
   },

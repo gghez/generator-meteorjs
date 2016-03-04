@@ -21,42 +21,27 @@ module.exports = {
 	
     },
 
-    scripting: function(){
-	if (this.options.coffee){
-	    this.step1('CoffeeScript support');
-	    this.spawnCommandSync('meteor', ['add', 'coffeescript']);
-	}
-    },
+    dependencies: function(){
+	this.step1('Configure application dependencies');
+	
+	var deps = [], remove = [];
 
-    remove_defaults: function(){
-	if (this.should.remove_defaults.length){
-	    this.step1('Remove default packages');
-	    this.spawnCommandSync('meteor', ['remove'].concat(this.should.remove_defaults));
-	}
-    },
+	if (this.options.coffee) deps.push('coffeescript');
 
-    styles: function(){
-	switch (this.should.styles){
-	case '<none>':
-	    break;
-	default:
-	    this.step1('Application styles generator is', this.should.styles);
-	    this.spawnCommandSync('meteor', ['add', this.should.styles]);
-	    break;
-	}
-    },
+	if (this.should.remove_defaults.length)
+	    remove.push.apply(remove, this.should.remove_defaults);
 
-    accounts: function(){
-	if (this.should.accounts.length){
-	    this.step1('Accounts configuration');
-	    this.spawnCommandSync('meteor', ['add'].concat(this.should.accounts));
-	}	    
-    },
+	if (this.should.styles != '<none>')
+	    deps.push(this.should.styles);
 
-    router: function(){
-	if (this.should.flowrouter){
-	    this.step1('Router configuration');
-	    this.spawnCommandSync('meteor', ['add', 'kadira:flow-router', 'kadira:blaze-layout']);
-	}
+	if (this.should.accounts.length)
+	    deps.push.apply(deps, this.should.accounts);
+
+	if (this.should.flowrouter)
+	    deps.push('kadira:flow-router', 'kadira:blaze-layout');
+
+	this.depsToAdd = deps;
+	this.depsToRemove = remove;
     }
+
 };

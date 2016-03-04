@@ -1,4 +1,4 @@
-
+var _ = require('underscore');
 
 module.exports = {
 
@@ -20,27 +20,24 @@ module.exports = {
     templates: function(){
 	this.step2('Create templates');
 
-	var baseReplace = {
-	    appName: this.appName
-	}
+	var baseReplace = _.assign({}, this);
 	
 	this.fs.copyTpl(
-	    this.templatePath('index.html'),
-	    this.destinationPath('index.html'),
+	    this.templatePath('*.html'),
+	    this.destinationPath(),
 	    baseReplace);
 
-	if (this.options.coffee){
+	this.fs.copyTpl(
+	    this.templatePath('index' + this.scriptSuffix),
+	    this.destinationPath('index' + this.scriptSuffix),
+	    baseReplace);
+	
+	if (this.options.routing) {
 	    this.fs.copyTpl(
-		this.templatePath('index.coffee'),
-		this.destinationPath('index.coffee'),
-		baseReplace);
-	}else{
-	    this.fs.copyTpl(
-		this.templatePath('index.js'),
-		this.destinationPath('index.js'),
+		this.templatePath('router' + this.scriptSuffix),
+		this.destinationPath('router' + this.scriptSuffix),
 		baseReplace);
 	}
-	
     }
 
 };

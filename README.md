@@ -1,5 +1,7 @@
 # generator-meteorjs
 
+[![Build Status](https://travis-ci.org/gghez/generator-meteorjs.svg?branch=master)](https://travis-ci.org/gghez/generator-meteorjs)
+
 Yeoman generator for MeteorJS application and packages.
 
 ## Prerequisites

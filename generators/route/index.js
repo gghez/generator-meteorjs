@@ -33,26 +33,33 @@ module.exports = MeteorJSGenerator.extend({
 	}
     },
     
-    writing: function(){
-	var routeTemplate = this.fs.read(this.templatePath('route' + this.scriptSuffix));
-	var routeScript = ejs.render(routeTemplate, this);
+    writing:{
+	
+	// Add route entry point	
+	path: function(){
+	    var routeTemplate = this.fs.read(this.templatePath('route' + this.scriptSuffix));
+	    var routeScript = ejs.render(routeTemplate, this);
 
-	var routerScript = this.fs.exists(this._routerScript) ? this.fs.read(this._routerScript) : '';
+	    var routerScript = this.fs.exists(this._routerScript) ? this.fs.read(this._routerScript) : '';
 
-	if (routerScript.indexOf(routeScript) >= 0){
-	    this.log('Route path already defined.');
-	} else {
-	    routerScript += '\n' + routeScript + '\n';
-	    this.fs.write(this.destinationPath('router' + this.scriptSuffix), routerScript);
-	}
+	    if (routerScript.indexOf(routeScript) >= 0){
+		this.log('Route path already defined.');
+	    } else {
+		routerScript += '\n' + routeScript + '\n';
+		this.fs.write(this.destinationPath('router' + this.scriptSuffix), routerScript);
+	    }
+	},
 
-	if (this.fs.exists('client/templates/' + this.template + '.html')){
-	    this.log('Route template already defined.');
-	} else {
-	    this.fs.copyTpl(
-		this.templatePath('route-template.html'),
-		this.destinationPath('client/templates/' + this.template + '.html'),
-		this);
+	// Build route template
+	template: function (){
+	    if (this.fs.exists('client/templates/' + this.template + '.html')){
+		this.log('Route template already defined.');
+	    } else {
+		this.fs.copyTpl(
+		    this.templatePath('route-template.html'),
+		    this.destinationPath('client/templates/' + this.template + '.html'),
+		    this);
+	    }
 	}
 	
     }

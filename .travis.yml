@@ -3,3 +3,5 @@ node_js:
   - "4.0"
 install: npm install
 script: npm test
+before_install:
+  - "curl -L http://git.io/ejPSng | /bin/sh"

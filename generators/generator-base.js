@@ -1,4 +1,5 @@
 var generators = require('yeoman-generator'),
+    path = require('path'),
     chalk = require('chalk'),
     fs = require('fs');
 

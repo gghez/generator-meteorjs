@@ -13,7 +13,10 @@ module.exports = {
 	this.fs.delete('*.js');
 
 	if (this.should.styles != '<none>'){
-	    this.fs.move(this.appName+'.css', this.appName+'.'+this.should.styles);
+	    var stylesFile = this.appName + '.css';
+	    if (this.fs.exists(stylesFile)){
+		this.fs.move(stylesFile, this.appName+'.'+this.should.styles);
+	    }
 	}
     },
 
@@ -32,7 +35,7 @@ module.exports = {
 	    this.destinationPath('index' + this.scriptSuffix),
 	    baseReplace);
 	
-	if (this.options.routing) {
+	if (this.should.flowrouter) {
 	    this.fs.copyTpl(
 		this.templatePath('router' + this.scriptSuffix),
 		this.destinationPath('router' + this.scriptSuffix),

@@ -6,7 +6,7 @@ var generators = require('yeoman-generator'),
 module.exports = MeteorJSGenerator.extend({
 
     constructor: function(){
-	generators.Base.apply(this, arguments);
+	MeteorJSGenerator.apply(this, arguments);
 
 	this.argument('path', {required: true, desc: 'The route path.'});
 
@@ -27,6 +27,10 @@ module.exports = MeteorJSGenerator.extend({
     initializing: function(){
 	var templateFromPath = this.path && _.find(this.path.split('/'), (p) => p && p[0] != ':');
 	this.template = this.options.template || templateFromPath || '';
+
+	if (!this.template) {
+	    this.fail('You must either select a non root path or specify a template name with --template option.');
+	}
     },
     
     writing: function(){
@@ -34,9 +38,23 @@ module.exports = MeteorJSGenerator.extend({
 	var routeScript = ejs.render(routeTemplate, this);
 
 	var routerScript = this.fs.exists(this._routerScript) ? this.fs.read(this._routerScript) : '';
+
+	if (routerScript.indexOf(routeScript) >= 0){
+	    this.log('Route path already defined.');
+	} else {
+	    routerScript += '\n' + routeScript + '\n';
+	    this.fs.write(this.destinationPath('router' + this.scriptSuffix), routerScript);
+	}
+
+	if (this.fs.exists('client/templates/' + this.template + '.html')){
+	    this.log('Route template already defined.');
+	} else {
+	    this.fs.copyTpl(
+		this.templatePath('route-template.html'),
+		this.destinationPath('client/templates/' + this.template + '.html'),
+		this);
+	}
 	
-	routerScript += '\n' + routeScript + '\n';
-	this.fs.write(this.destinationPath('router' + this.scriptSuffix), routerScript);
     }
     
 });

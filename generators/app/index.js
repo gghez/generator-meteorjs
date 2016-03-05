@@ -5,7 +5,31 @@ var generators = require('yeoman-generator'),
     fs = require('fs');
 
 module.exports = MeteorJSGenerator.extend({
-        
+
+    constructor: function(){
+	MeteorJSGenerator.apply(this, arguments);
+
+	this.argument('name', {
+	    desc: 'Application name to create or nothing for in-place creation.',
+	    required: false,
+	    type: String
+	});
+
+	this.option('packages', {desc: 'Create packages inside application.', type: String});
+	this.option('coffee', {desc: 'Generate CoffeeScript instead of Javascript.'});
+	this.option('verbose', {desc: 'Increase verbosity of processing stages.'});
+
+	this.scriptSuffix = this.options.coffee ? '.coffee' : '.js';
+	this.appName = this.name || process.cwd().split(path.sep).pop();
+	if (this.name) {
+	    fs.mkdirSync(this.name);
+	    this.destinationRoot(this.name);
+	}
+
+	this.should = {};
+	this.questions = [];
+    },
+
     initializing: function(){
 	if (this.fs.exists('package.js')){
 	    this.fail('Cannot configure a Meteor application inside a package directory.');

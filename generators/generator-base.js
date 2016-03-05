@@ -7,33 +7,14 @@ var MeteorJSGenerator = generators.Base.extend({
 
     constructor: function(){
 	generators.Base.apply(this, arguments);
-
-	this.argument('name', {
-	    desc: 'Application name to create or nothing for in-place creation.',
-	    required: false,
-	    type: String
-	});
-
-	this.option('packages', {desc: 'Create packages inside application.', type: String});
-	this.option('coffee', {desc: 'Generate CoffeeScript instead of Javascript.'});
-	this.option('verbose', {desc: 'Increase verbosity of processing stages.'});
-
-	this.scriptSuffix = this.options.coffee ? '.coffee' : '.js';
-	this.appName = this.name || process.cwd().split(path.sep).pop();
-	if (this.name) {
-	    fs.mkdirSync(this.name);
-	    this.destinationRoot(this.name);
-	}
-
-	this.should = {};
-	this.questions = [];
-
+	
 	this.conflicter.force = true;
     },
 
     fail: function(msg){
 	this.env.error(chalk.bold.red(msg));
     },
+    
     step1: function(name, text){
 	logs = [chalk.bold.yellow(name)];
 	if (text) logs.push(chalk.bold.white(text));

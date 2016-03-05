@@ -1,7 +1,5 @@
 language: node_js
 node_js:
   - "4.0"
-install:
+before_install:
   - "curl https://install.meteor.com/ | /bin/sh"
-  - "npm install"
-script: npm test

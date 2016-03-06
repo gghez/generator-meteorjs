@@ -122,4 +122,4 @@ When feature added and tested, send your PR.
 
 ## TODO
 
-See [Issues](issues) section.
+See [Issues](../../issues) section.

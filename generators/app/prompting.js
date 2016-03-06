@@ -16,7 +16,7 @@ module.exports = {
         });
     },
 
-    noob: function() {
+    secure: function() {
         this.questions.push({
             type: 'checkbox',
             name: 'remove_defaults',

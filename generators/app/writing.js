@@ -17,34 +17,36 @@ module.exports = {
     styles: function() {
         this.step2('Create style files');
 
-        if (this.should.styles != '<none>') {
-            var stylesFile = this.appName + '.css';
-            if (this.fs.exists(stylesFile)) {
-                this.fs.move(stylesFile, this.appName + this.styleSuffix);
-            }
+        var defaultStylesFile = `${this.appName}.css`;
+
+        if (this.should.styles == '<none>') {
+            this.fs.delete(defaultStylesFile);
+        } else {
+            this.fs.move(defaultStylesFile, `client/${this.appName + this.styleSuffix}`);
         }
     },
 
     templates: function() {
         this.step2('Create templates');
 
-        var baseReplace = _.assign({}, this);
-
+        // HTML templates
         this.fs.copyTpl(
             this.templatePath('*.html'),
-            this.destinationPath(),
-            baseReplace);
+            this.destinationPath('client/'),
+            this);
 
+        // Scripting templates
         this.fs.copyTpl(
-            this.templatePath(path.join(this.should.language, 'index' + this.scriptSuffix)),
-            this.destinationPath('index' + this.scriptSuffix),
-            baseReplace);
+            this.templatePath(path.join(this.should.language, `index${this.scriptSuffix}`)),
+            this.destinationPath(path.join('client', `index${this.scriptSuffix}`)),
+            this);
 
+        // Router support
         if (this.should.flowrouter) {
             this.fs.copyTpl(
-                this.templatePath(path.join(this.should.language, 'router' + this.scriptSuffix)),
-                this.destinationPath('router' + this.scriptSuffix),
-                baseReplace);
+                this.templatePath(path.join(this.should.language, `router${this.scriptSuffix}`)),
+                this.destinationPath(`router${this.scriptSuffix}`),
+                this);
         }
     }
 

@@ -70,7 +70,7 @@ Questions are:
 
 ## Structure
 
-When this script is called: `yo meteorjs myblog --packages reader,writer,core`
+When this script is called: `yo meteorjs myblog --router --packages reader,writer,core`
 
 This structure is created:
 
@@ -86,10 +86,23 @@ This structure is created:
    .../writer (same as reader)
    .../core (same as reader)
 .../ myblog.css
-.../ myblog.js
-.../ myblog.html
+.../ index.js
+.../ router.js
+.../ index.html
 
 ```
+
+## Contributing
+
+Clone repository:
+
+```
+git clone git@github.com:gghez/generator-meteorjs.git
+```
+
+Tests are located in `./test` folder and can be run using command `npm test`.
+
+When feature added and tested, send your PR.
 
 ## License
 
@@ -99,6 +112,5 @@ This structure is created:
 
 Sub commands to implement:
 
-- meteorjs:add-route
-- meteorjs:add-collection
+- meteorjs:collection
 

@@ -5,27 +5,94 @@ var helpers = require('yeoman-test'),
     fs = require('fs');
 
 
-describe('Application generator tests', () => {
+describe('Application generator', () => {
 
-    it('--coffee option override question', (done) => {
-        helpers.run(path.join(__dirname, '../generators/app'))
-            .withOptions({ coffee: true })
-            .withPrompts({
-                flowrouter: false,
-                remove_defaults: [],
-                styles: '<none>',
-                accounts: [],
-                language: 'js'
-            })
-            .on('end', () => {
-                var content = fs.readFileSync('.meteor/packages').toString();
-                chai.assert.include(content, 'coffeescript\n');
+    describe.only('User packages', () => {
+        var generator;
 
-                assert.file('index.coffee');
-                assert.noFile('index.fs');
+        before((done) => {
+            helpers.run(path.join(__dirname, '../generators/app'))
+                .inTmpDir((dir) => console.log(dir))
+                .withOptions({
+                    packages: 'reader,core',
+                })
+                .withPrompts({
+                    flowrouter: false,
+                    remove_defaults: [],
+                    styles: '<none>',
+                    accounts: [],
+                    language: 'js'
+                })
+                .on('ready', (_) => generator = _)
+                .on('end', done);
+        });
 
-                done();
-            });
+        it('Packages file structure', () => {
+            assert.file('packages/reader/package.js');
+            assert.file('packages/core/package.js');
+        });
+
+        it('Application reference user packages', () => {
+            var content = fs.readFileSync('.meteor/packages').toString();
+
+            chai.assert.include(content, 'reader\n');
+            chai.assert.include(content, 'core\n');
+        });
+    });
+
+    describe('Question overriden by option', () => {
+        before((done) => {
+            helpers.run(path.join(__dirname, '../generators/app'))
+                .inTmpDir((dir) => console.log(dir))
+                .withOptions({
+                    coffee: true,
+                    styles: 'less',
+                    secure: true,
+                    router: true
+                })
+                .withPrompts({
+                    flowrouter: false,
+                    remove_defaults: [],
+                    styles: '<none>',
+                    accounts: [],
+                    language: 'js'
+                })
+                .on('end', done);
+        });
+
+        it('--coffee', () => {
+            var content = fs.readFileSync('.meteor/packages').toString();
+            chai.assert.include(content, 'coffeescript\n');
+
+            assert.file('client/index.coffee');
+            assert.noFile('client/index.js');
+        });
+
+        it('--styles less', () => {
+            var content = fs.readFileSync('.meteor/packages').toString();
+            chai.assert.include(content, 'less\n');
+
+            var projectName = process.cwd().split(path.sep).pop();
+            assert.file(`client/${projectName}.less`);
+
+            assert.noFile(projectName + '.css');
+
+        });
+
+        it('--router', () => {
+            var content = fs.readFileSync('.meteor/packages').toString();
+            chai.assert.include(content, 'kadira:flow-router\n');
+            chai.assert.include(content, 'kadira:blaze-layout\n');
+
+            assert.file('router.coffee');
+        });
+
+        it('--secure', () => {
+            var content = fs.readFileSync('.meteor/packages').toString();
+            chai.assert.notInclude(content, 'insecure\n');
+            chai.assert.notInclude(content, 'autopublish\n');
+        });
+
     });
 
     describe('Default install', () => {
@@ -46,19 +113,19 @@ describe('Application generator tests', () => {
 
         var shouldIncludeFiles = () => {
             assert.file([
-                'index.js',
+                'client/layout.html',
+                'client/index.js',
                 'router.js',
-                'layout.html',
                 '.meteor'
             ]);
         };
 
         var shouldExcludeFiles = () => {
             assert.noFile([
-                'index.coffee',
-                'styles.css',
+                'client/index.coffee',
+                'client/*.css',
+                '*.css',
                 'router.coffee',
-                'client',
                 'packages'
             ]);
         };
@@ -81,7 +148,7 @@ describe('Application generator tests', () => {
                 shouldIncludeFiles();
 
                 var projectName = process.cwd().split(path.sep).pop();
-                assert.file(projectName + '.less');
+                assert.file(`client/${projectName}.less`);
             });
 
             it('Project file structure does not include', shouldExcludeFiles);
@@ -107,7 +174,7 @@ describe('Application generator tests', () => {
 
             it('Project file structure does include', () => {
                 shouldIncludeFiles();
-                assert.file('aproject.less');
+                assert.file('client/aproject.less');
             });
 
             it('Project file structure does not include', shouldExcludeFiles);

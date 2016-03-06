@@ -16,8 +16,11 @@ module.exports = MeteorJSGenerator.extend({
         });
 
         this.option('packages', { desc: 'Create packages inside application.', type: String });
-        this.option('coffee', { desc: 'Generate CoffeeScript instead of Javascript.' });
-        this.option('verbose', { desc: 'Increase verbosity of processing stages.' });
+        this.option('coffee', { desc: 'Generate CoffeeScript instead of Javascript.', type: Boolean });
+        this.option('router', { desc: 'Enable FlowRouter support for application.', type: Boolean });
+        this.option('styles', { desc: 'Specify a styles generator for application (less, fourseven:scss...).', type: String });
+        this.option('secure', { desc: 'Remove "insecure" and "autopublish" default packages.', type: Boolean });
+        this.option('verbose', { desc: 'Increase verbosity of processing stages.', type: Boolean});
     },
 
     initializing: function() {

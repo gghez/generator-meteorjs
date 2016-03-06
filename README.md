@@ -1,5 +1,7 @@
 # generator-meteorjs
 
+[![npm:](https://img.shields.io/npm/v/generator-meteorjs.svg?style=flat-square)](https://www.npmjs.com/packages/generator-meteorjs)
+
 Yeoman generator for MeteorJS application and packages.
 
 ## Prerequisites

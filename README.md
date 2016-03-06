@@ -122,7 +122,4 @@ When feature added and tested, send your PR.
 
 ## TODO
 
-Sub commands to implement:
-
-- meteorjs:collection
-
+See [Issues](issues) section.

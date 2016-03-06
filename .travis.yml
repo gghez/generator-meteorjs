@@ -5,4 +5,4 @@ node_js:
 before_script:
   - "curl https://install.meteor.com/ | /bin/sh"
   - "export PATH=$HOME/.meteor:$PATH"
-script: mocha --timeout 60000
+  - "npm install -g yo"

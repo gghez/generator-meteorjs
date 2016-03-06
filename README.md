@@ -4,6 +4,8 @@
 
 Yeoman generator for MeteorJS application and packages.
 
+> **Note:** As this project is at development stage, please don't hesitate to to use [Issues](../../issues) section for any suggestion.
+
 ## Prerequisites
 
 * [nodejs](http://nodejs.com)
@@ -121,7 +123,3 @@ When feature added and tested, send your PR.
 ## License
 
 [MIT License](http://en.wikipedia.org/wiki/MIT_License)
-
-## TODO
-
-See [Issues](../../issues) section.

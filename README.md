@@ -21,12 +21,6 @@ To install generator-meteorjs from npm, run:
 $ npm install -g generator-meteorjs
 ```
 
-Create a new project directory:
-
-```
-$ mkdir your-new-project && cd $_
-```
-
 Initiate the generator:
 
 ```
@@ -42,6 +36,8 @@ $ meteor
 
 ## Features
 
+### Application generator (default)
+
 Create a MeteorJS application from scratch based on command line options and answers to prompted questions.
 
 ```
@@ -50,23 +46,32 @@ yo meteorjs --help
 
 Arguments:
 
-- `name` when specified generate projet in a new sub-directory named as is.
+- `name` when specified, generate projet in a new sub-directory named as is.
 
 
 Options are:
 
 - `--coffee` for CoffeeScript language support
 - `--verbose` to activate debug traces
-- `--packages list,of,pkg` to create empty packages inside the application.
+- `--packages list,of,pkg` to create empty packages inside the application
+- `--styles <less|fourseven:scss|...>` Use a specific styles generator
+- `--router` Enable FlowRouter support as routing middleware
+- `--secure` Remove default packages: "insecure" and "autopublish"
+- `--help` to display all generator options
 
-Questions are:
-
-- Remove default packages (insecure, autopublish)
-- Accounts related packages (accounts-password, accounts-facebook...)
-- Application styles generator (LESS, SCSS or nothing)
-- Add application router Y/n (no iron-router support for now)
+> Some options disable questions related to
 
 > Answers to questions are stored for next execution then you won't have my defaults a second time ^^
+
+### Generator sub-commands
+
+#### `meteorjs:route`
+
+Generates a new route with path registration and associated template.
+
+Argument is route **path** and you can also specify `--template <name>` to generate and associate a custom template name.
+
+> Template name is auto-generated if not overriden by `--template` option. e.g.: for path `/posts/:postId`, a template named _posts_ is generated.
 
 ## Structure
 

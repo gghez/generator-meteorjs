@@ -5,14 +5,13 @@ var helpers = require('yeoman-test'),
     fs = require('fs');
 
 
-describe('Application generator', () => {
+describe('yo meteorjs', () => {
 
-    describe.only('User packages', () => {
+    describe('--packages', () => {
         var generator;
 
         before((done) => {
             helpers.run(path.join(__dirname, '../generators/app'))
-                .inTmpDir((dir) => console.log(dir))
                 .withOptions({
                     packages: 'reader,core',
                 })
@@ -40,10 +39,9 @@ describe('Application generator', () => {
         });
     });
 
-    describe('Question overriden by option', () => {
+    describe('--<question_override>', () => {
         before((done) => {
             helpers.run(path.join(__dirname, '../generators/app'))
-                .inTmpDir((dir) => console.log(dir))
                 .withOptions({
                     coffee: true,
                     styles: 'less',
@@ -95,7 +93,7 @@ describe('Application generator', () => {
 
     });
 
-    describe('Default install', () => {
+    describe('default install', () => {
 
         var checkMeteorDependencies = () => {
             var content = fs.readFileSync('.meteor/packages').toString();
@@ -172,12 +170,12 @@ describe('Application generator', () => {
                     .on('end', done);
             });
 
-            it('Project file structure does include', () => {
+            it('file structure does include', () => {
                 shouldIncludeFiles();
                 assert.file('client/aproject.less');
             });
 
-            it('Project file structure does not include', shouldExcludeFiles);
+            it('file structure does not include', shouldExcludeFiles);
 
             it('Meteor dependencies', checkMeteorDependencies);
 

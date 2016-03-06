@@ -49,8 +49,6 @@ module.exports = MeteorJSGenerator.extend({
 
     writing: require('./writing'),
 
-    install: require('./install'),
-
     end: function() {
         this.step1('MeteorJS Generator complete.');
     }

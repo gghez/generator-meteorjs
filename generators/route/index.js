@@ -3,65 +3,111 @@ var generators = require('yeoman-generator'),
     _ = require('underscore'),
     MeteorJSGenerator = require('../generator-base');
 
+function capitalize(str) {
+    return str && str[0].toUpperCase() + str.substr(1);
+}
+
 module.exports = MeteorJSGenerator.extend({
 
-    constructor: function(){
-	MeteorJSGenerator.apply(this, arguments);
+    constructor: function() {
+        MeteorJSGenerator.apply(this, arguments);
 
-	this.argument('path', {required: true, desc: 'The route path.'});
+        this.argument('path', { required: true, desc: 'The route path.' });
 
-	this.option('collection', {required: false, desc: 'Collection to use inside route template.'});
-	this.option('template', {required: false, desc: 'Template name associated to route.'});
-
-	if (this.fs.exists('router.js')){
-	    this.scriptSuffix = '.js';
-	}else if (this.fs.exists('router.coffee')) {
-	    this.scriptSuffix = '.coffee';
-	}else{
-	    this.fail('No router script found. Depending on language support, you should have a "router.js" or "router.coffee" script at your projet root.');
-	}
-
-	this._routerScript = 'router' + this.scriptSuffix;
+        this.option('collection', { required: false, desc: 'Collection to use inside route template.' });
+        this.option('template', { required: false, desc: 'Template name associated to route.' });
     },
 
-    initializing: function(){
-	var templateFromPath = this.path && _.find(this.path.split('/'), (p) => p && p[0] != ':');
-	this.template = this.options.template || templateFromPath || '';
+    initializing: function() {
+        if (this.fs.exists('router.js')) {
+            this.language = 'js';
+        } else if (this.fs.exists('router.coffee')) {
+            this.language = 'coffee';
+        } else {
+            this.fail('No router script found. Depending on language support, you should have a "router.js" or "router.coffee" script at your projet root.');
+        }
 
-	if (!this.template) {
-	    this.fail('You must either select a non root path or specify a template name with --template option.');
-	}
+        this.scriptSuffix = `.${this.language}`;
+        this.routerScript = `router${this.scriptSuffix}`;
+
+        var templateFromPath = this.path && _.find(this.path.split('/'), (p) => p && p[0] != ':');
+        this.template = this.options.template || templateFromPath || '';
+        this.collection = this.options.collection || this.template;
+        this.collectionVar = capitalize(this.collection);
+        this.single = _.some(this.path.split('/'), p => p && p[0] == ':');
+
+        if (!this.template) {
+            this.fail('You must either select a non root path or specify a template name with --template option.');
+        }
     },
-    
-    writing:{
-	
-	// Add route entry point	
-	path: function(){
-	    var routeTemplate = this.fs.read(this.templatePath('route' + this.scriptSuffix));
-	    var routeScript = ejs.render(routeTemplate, this);
 
-	    var routerScript = this.fs.exists(this._routerScript) ? this.fs.read(this._routerScript) : '';
+    writing: {
 
-	    if (routerScript.indexOf(routeScript) >= 0){
-		this.log('Route path already defined.');
-	    } else {
-		routerScript += '\n' + routeScript + '\n';
-		this.fs.write(this.destinationPath('router' + this.scriptSuffix), routerScript);
-	    }
-	},
+        collection: function() {
+            var collectionScript = '',
+                collectionFile = `collections${this.scriptSuffix}`;
 
-	// Build route template
-	template: function (){
-	    if (this.fs.exists('client/templates/' + this.template + '.html')){
-		this.log('Route template already defined.');
-	    } else {
-		this.fs.copyTpl(
-		    this.templatePath('route-template.html'),
-		    this.destinationPath('client/templates/' + this.template + '.html'),
-		    this);
-	    }
-	}
-	
+            if (this.fs.exists(collectionFile)) {
+                collectionScript = this.fs.read(collectionFile);
+            }
+
+            var collectionDefined = false;
+            if ((this.language == 'js' && collectionScript.indexOf(`${this.collectionVar} = new Mongo.Collection('${this.collection}');`) != -1) ||
+                (this.language == 'coffee' && collectionScript.indexOf(`@${this.collectionVar} = new Mongo.Collection '${this.collection}'`) != -1)) {
+                collectionDefined = true;
+            }
+
+            if (!collectionDefined) {
+                collectionScript += '\n';
+                if (this.language == 'js') {
+                    collectionScript += `${this.collectionVar} = new Mongo.Collection('${this.collection}');`;
+                } else if (this.language == 'coffee') {
+                    collectionScript += `@${this.collectionVar} = new Mongo.Collection '${this.collection}'`;
+                }
+                collectionScript += '\n';
+
+                this.fs.write(collectionFile, collectionScript);
+            }
+        },
+
+        // Add route entry point
+        path: function() {
+            var routeTemplate = this.fs.read(this.templatePath(`route${this.scriptSuffix}`));
+            var routeScript = ejs.render(routeTemplate, this, {debug: false});
+
+            var routerScriptContent = this.fs.exists(this.routerScript) ? this.fs.read(this.routerScript) : '';
+
+            if (routerScriptContent.indexOf(routeScript) >= 0) {
+                this.log('Route path already defined.');
+            } else {
+                routerScriptContent += '\n' + routeScript + '\n';
+                this.fs.write(this.destinationPath(this.routerScript), routerScriptContent);
+            }
+        },
+
+        // Build route template
+        template: function() {
+            var htmlTemplate = `client/templates/${this.template}.html`;
+            if (this.fs.exists(htmlTemplate)) {
+                this.log('Route template already defined.');
+            } else {
+                this.fs.copyTpl(
+                    this.templatePath('route-template.html'),
+                    this.destinationPath(htmlTemplate),
+                    this);
+            }
+
+            var scriptTemplate = `client/templates/${this.template}${this.scriptSuffix}`;
+            if (this.fs.exists(scriptTemplate)) {
+                this.log('Route template script already defined.');
+            } else {
+                this.fs.copyTpl(
+                    this.templatePath(`${this.language}/route-template${this.scriptSuffix}`),
+                    this.destinationPath(scriptTemplate),
+                    this);
+            }
+        }
+
     }
-    
+
 });

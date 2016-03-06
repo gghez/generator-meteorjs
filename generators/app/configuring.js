@@ -16,22 +16,24 @@ module.exports = {
 
     create: function() {
         this.step2('Run meteor create command.');
-        this.spawnCommandSync('meteor', ['create', '.']);
+        this.spawnCommandSync('meteor', ['create', '.'], { stdio: 'ignore' });
     },
 
     packages: function() {
+        this.userPackages = [];
+
         if (!this.options.packages) return;
 
         this.step2('Create initial user packages.');
 
-        var packages = this.userPackages = (this.options.packages || '').split(',').filter((p) => p.trim());
-        packages.forEach((p) => {
+        this.userPackages = (this.options.packages || '').split(',').filter((p) => p.trim());
+        this.userPackages.forEach((p) => {
             if (this.fs.exists('packages/' + p)) {
                 this.log('Package', chalk.green(p), 'already configured.');
             } else {
                 this.step2('Configuring package', p);
 
-                this.spawnCommandSync('meteor', ['create', '--package', p]);
+                this.spawnCommandSync('meteor', ['create', '--package', p], { stdio: 'ignore' });
             }
         });
 
@@ -64,11 +66,11 @@ module.exports = {
         }
 
         if (deps.length) {
-            this.spawnCommandSync('meteor', ['add'].concat(deps));
+            this.spawnCommandSync('meteor', ['add'].concat(deps), { stdio: 'ignore' });
         }
 
         if (remove.length) {
-            this.spawnCommandSync('meteor', ['remove'].concat(remove));
+            this.spawnCommandSync('meteor', ['remove'].concat(remove), { stdio: 'ignore' });
         }
     }
 

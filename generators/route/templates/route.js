@@ -1,6 +1,8 @@
-
 FlowRouter.route('<%= path %>', {
-    action: () => {
-	BlazeLayout.render('mainLayout', {content: '<%= template %>'});
+    action: (params) => {
+        BlazeLayout.render('mainLayout', {
+          content: '<%= template %>',
+          params: params
+        });
     }
 });

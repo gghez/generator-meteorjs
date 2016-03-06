@@ -36,6 +36,7 @@
   ],
   "devDependencies": {
     "chai": "^3.5.0",
+    "fs-extra": "^0.26.5",
     "mocha": "^2.4.5",
     "yeoman-assert": "^2.1.1",
     "yeoman-test": "^1.1.0"

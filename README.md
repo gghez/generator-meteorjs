@@ -75,7 +75,12 @@ Argument is route **path** and you can also specify `--template <name>` to gener
 
 ## Structure
 
-When this script is called: `yo meteorjs myblog --router --packages reader,writer,core`
+When this script is called:
+
+```
+yo meteorjs myblog --router --packages reader,writer,core
+yo meteorjs:route /posts --template postList
+```
 
 This structure is created:
 
@@ -90,11 +95,13 @@ This structure is created:
       .../ README.md
    .../writer (same as reader)
    .../core (same as reader)
-.../ myblog.css
-.../ index.js
+.../ client
+   .../ myblog.css
+   .../ index.js
+   .../ index.html
+   .../ templates
+      .../ postList.html
 .../ router.js
-.../ index.html
-
 ```
 
 ## Contributing

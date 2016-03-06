@@ -64,6 +64,7 @@ describe('Application generator tests', () => {
         };
 
         describe('without name argument', () => {
+
             before((done) => {
                 helpers.run(path.join(__dirname, '../generators/app'))
                     .withPrompts({
@@ -86,9 +87,11 @@ describe('Application generator tests', () => {
             it('Project file structure does not include', shouldExcludeFiles);
 
             it('Meteor dependencies', checkMeteorDependencies);
+
         });
 
         describe('with name argument', () => {
+
             before((done) => {
                 helpers.run(path.join(__dirname, '../generators/app'))
                     .withArguments('aproject')
@@ -110,6 +113,7 @@ describe('Application generator tests', () => {
             it('Project file structure does not include', shouldExcludeFiles);
 
             it('Meteor dependencies', checkMeteorDependencies);
+
         });
     });
 

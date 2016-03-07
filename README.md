@@ -1,6 +1,6 @@
 # generator-meteorjs
 
-[![npm:](https://img.shields.io/npm/v/generator-meteorjs.svg?style=flat-square)](https://www.npmjs.com/packages/generator-meteorjs)
+[![npm:](https://img.shields.io/npm/v/generator-meteorjs.svg)](https://www.npmjs.com/packages/generator-meteorjs)
 [![npm](https://img.shields.io/npm/l/generator-meteorjs.svg)](https://www.npmjs.com/package/generator-meteorjs)
 [![Maintenance](https://img.shields.io/maintenance/yes/2016.svg)](https://www.npmjs.com/package/generator-meteorjs)
 [![npm](https://img.shields.io/npm/dm/generator-meteorjs.svg)](https://www.npmjs.com/package/generator-meteorjs)

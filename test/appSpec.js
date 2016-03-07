@@ -4,10 +4,10 @@ var helpers = require('yeoman-test'),
     chai = require('chai'),
     fs = require('fs');
 
-
 describe('yo meteorjs', () => {
 
     describe('--packages', () => {
+
         var generator;
 
         before((done) => {
@@ -37,9 +37,11 @@ describe('yo meteorjs', () => {
             chai.assert.include(content, 'reader\n');
             chai.assert.include(content, 'core\n');
         });
+
     });
 
     describe('--<question_override>', () => {
+
         before((done) => {
             helpers.run(path.join(__dirname, '../generators/app'))
                 .withOptions({
@@ -114,8 +116,13 @@ describe('yo meteorjs', () => {
                 'client/layout.html',
                 'client/index.js',
                 'router.js',
-                '.meteor'
+                '.meteor',
+                '.travis.yml'
             ]);
+        };
+
+        var travisCheck = () => {
+            assert.fileContent('.travis.yml', '');
         };
 
         var shouldExcludeFiles = () => {
@@ -153,6 +160,8 @@ describe('yo meteorjs', () => {
 
             it('Meteor dependencies', checkMeteorDependencies);
 
+            it('.travis.yml', travisCheck);
+
         });
 
         describe('with name argument', () => {
@@ -179,7 +188,10 @@ describe('yo meteorjs', () => {
 
             it('Meteor dependencies', checkMeteorDependencies);
 
+            it('.travis.yml', travisCheck);
+
         });
+
     });
 
 });

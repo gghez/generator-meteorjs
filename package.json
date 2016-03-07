@@ -4,7 +4,7 @@
   "description": "Yeoman generator for MeteorJS application and package.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --timeout 30000"
+    "test": "mocha --timeout 45000"
   },
   "repository": {
     "type": "git",

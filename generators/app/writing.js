@@ -48,6 +48,13 @@ module.exports = {
                 this.destinationPath(`router${this.scriptSuffix}`),
                 this);
         }
+
+        // .travis.yml
+        if (!this.fs.exists('.travis.yml')) {
+            this.fs.copy(
+                this.templatePath('.travis.yml'),
+                this.destinationPath('.travis.yml'));
+        }
     }
 
 };

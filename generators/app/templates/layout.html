@@ -1,16 +1,14 @@
 <template name="mainLayout">
-<body>
-
-  <header>
-  </header>
-
-  <main>
-    
-    {{> Template.dynamic template=content }}
-    
-  </main>
-
-  <footer>
-  </footer>
-
-</body>
+    <body>
+        <header>
+        <% if (should.accounts.indexOf('accounts-ui') != -1) { %>
+          {{> loginButtons }}
+        <% } %>
+        </header>
+        <main>
+            {{> Template.dynamic template=content }}
+        </main>
+        <footer>
+        </footer>
+    </body>
+</template>

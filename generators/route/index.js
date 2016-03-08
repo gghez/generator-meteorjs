@@ -3,10 +3,6 @@ var generators = require('yeoman-generator'),
     _ = require('lodash'),
     MeteorJSGenerator = require('../generator-base');
 
-function capitalize(str) {
-    return str && str[0].toUpperCase() + str.substr(1);
-}
-
 module.exports = MeteorJSGenerator.extend({
 
     constructor: function() {
@@ -33,7 +29,7 @@ module.exports = MeteorJSGenerator.extend({
         var templateFromPath = this.path && _.find(this.path.split('/'), p => p && p[0] != ':');
         this.template = this.options.template || templateFromPath || '';
         this.collection = this.options.collection || templateFromPath;
-        this.collectionVar = capitalize(this.collection);
+        this.collectionVar = _.capitalize(this.collection);
         this.hasParams = _.some(this.path.split('/'), p => p && p[0] == ':');
         this.single = _.some(this.path.split('/'), p => p && p[0] == ':' && _.endsWith(_.lowerCase(p), 'id'));
 

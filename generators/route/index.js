@@ -1,6 +1,6 @@
 var generators = require('yeoman-generator'),
     ejs = require('ejs'),
-    _ = require('underscore'),
+    _ = require('lodash'),
     MeteorJSGenerator = require('../generator-base');
 
 function capitalize(str) {
@@ -30,11 +30,12 @@ module.exports = MeteorJSGenerator.extend({
         this.scriptSuffix = `.${this.language}`;
         this.routerScript = `router${this.scriptSuffix}`;
 
-        var templateFromPath = this.path && _.find(this.path.split('/'), (p) => p && p[0] != ':');
+        var templateFromPath = this.path && _.find(this.path.split('/'), p => p && p[0] != ':');
         this.template = this.options.template || templateFromPath || '';
-        this.collection = this.options.collection || this.template;
+        this.collection = this.options.collection || templateFromPath;
         this.collectionVar = capitalize(this.collection);
-        this.single = _.some(this.path.split('/'), p => p && p[0] == ':');
+        this.hasParams = _.some(this.path.split('/'), p => p && p[0] == ':');
+        this.single = _.some(this.path.split('/'), p => p && p[0] == ':' && _.endsWith(_.lowerCase(p), 'id'));
 
         if (!this.template) {
             this.fail('You must either select a non root path or specify a template name with --template option.');
@@ -71,16 +72,15 @@ module.exports = MeteorJSGenerator.extend({
         },
 
         // Add route entry point
-        path: function() {
-            var routeTemplate = this.fs.read(this.templatePath(`route${this.scriptSuffix}`));
-            var routeScript = ejs.render(routeTemplate, this, {debug: false});
-
-            var routerScriptContent = this.fs.exists(this.routerScript) ? this.fs.read(this.routerScript) : '';
+        router: function() {
+            var routeTemplate = this.fs.read(this.templatePath(`${this.language}/route-path${this.scriptSuffix}`));
+                routeScript = ejs.render(routeTemplate, this, {debug: false}),
+                routerScriptContent = this.fs.exists(this.routerScript) ? this.fs.read(this.routerScript) : '';
 
             if (routerScriptContent.indexOf(routeScript) >= 0) {
                 this.log('Route path already defined.');
             } else {
-                routerScriptContent += '\n' + routeScript + '\n';
+                routerScriptContent += '\n' + routeScript;
                 this.fs.write(this.destinationPath(this.routerScript), routerScriptContent);
             }
         },

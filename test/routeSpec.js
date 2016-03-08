@@ -28,18 +28,21 @@ describe('yo meteorjs:route', () => {
             .withArguments('/posts')
             .on('end', () => {
 
-                assert.fileContent('router.js', '\nFlowRouter.route(\'/\', {\n    action: () => {\n\tBlazeLayout.render(\'mainLayout\', {\n\t    content: \'home\'\n\t});\n    }\n});\n\nFlowRouter.route(\'/posts\', {\n    action: (params) => {\n        BlazeLayout.render(\'mainLayout\', {\n          content: \'posts\',\n          params: params\n        });\n    }\n});\n\n');
+                assert.fileContent(
+                    'router.js',
+                    readFixture('router-no-params.js'));
 
-                assert.file([
+                assert.fileContent(
                     'client/templates/posts.html',
+                    readFixture('posts.html'));
+
+                assert.fileContent(
                     'client/templates/posts.js',
-                    'collections.js'
-                ]);
+                    readFixture('posts-no-params.js'));
 
-                assert.fileContent('client/templates/posts.js', '\nTemplate.posts.onCreated(function(){\n\n\n  \n  this.subscribe(\'posts\');\n  \n\n\n});\n\nTemplate.posts.helpers({\n\n\n  postsItems: () => {\n    return Posts.find();\n  }\n\n\n});\n');
-
-                var collectionsScript = fs.readFileSync('collections.js').toString();
-                chai.assert.include(collectionsScript, 'Posts = new Mongo.Collection(\'posts\');');
+                assert.fileContent(
+                    'collections.js',
+                    'Posts = new Mongo.Collection(\'posts\');');
 
                 done();
             });
@@ -54,20 +57,50 @@ describe('yo meteorjs:route', () => {
             .withOptions({ collection: 'theposts' })
             .on('end', () => {
 
-                var routerScript = fs.readFileSync('router.js').toString();
+                assert.fileContent(
+                    'router.js',
+                    readFixture('router-no-params.js'));
 
-                chai.assert.equal(routerScript, '\nFlowRouter.route(\'/\', {\n    action: () => {\n\tBlazeLayout.render(\'mainLayout\', {\n\t    content: \'home\'\n\t});\n    }\n});\n\nFlowRouter.route(\'/posts\', {\n    action: (params) => {\n        BlazeLayout.render(\'mainLayout\', {\n          content: \'posts\',\n          params: params\n        });\n    }\n});\n\n');
-
-                assert.file([
+                assert.fileContent(
                     'client/templates/posts.html',
+                    readFixture('posts.html'));
+
+                assert.fileContent(
                     'client/templates/posts.js',
-                    'collections.js'
-                ]);
+                    readFixture('posts-no-params-collection.js'));
 
-                assert.fileContent('client/templates/posts.js', '\nTemplate.posts.onCreated(function(){\n\n\n  \n  this.subscribe(\'theposts\');\n  \n\n\n});\n\nTemplate.posts.helpers({\n\n\n  thepostsItems: () => {\n    return Theposts.find();\n  }\n\n\n});\n');
+                assert.fileContent(
+                    'collections.js',
+                    'Theposts = new Mongo.Collection(\'theposts\');');
 
-                var collectionsScript = fs.readFileSync('collections.js').toString();
-                chai.assert.include(collectionsScript, 'Theposts = new Mongo.Collection(\'theposts\');');
+                done();
+            });
+    });
+
+    it('--template', (done) => {
+        helpers.run(path.join(__dirname, '../generators/route'))
+            .inTmpDir((dir) => {
+                fs.copySync(appDir, dir);
+            })
+            .withArguments('/posts')
+            .withOptions({ template: 'postList' })
+            .on('end', () => {
+
+                assert.fileContent(
+                    'router.js',
+                    readFixture('router-no-params-template.js'));
+
+                assert.fileContent(
+                    'client/templates/postList.html',
+                    readFixture('posts-template.html'));
+
+                assert.fileContent(
+                    'client/templates/postList.js',
+                    readFixture('posts-no-params-template.js'));
+
+                assert.fileContent(
+                    'collections.js',
+                    'Posts = new Mongo.Collection(\'posts\');');
 
                 done();
             });
@@ -81,18 +114,21 @@ describe('yo meteorjs:route', () => {
             .withArguments('/posts/:postId')
             .on('end', () => {
 
-                assert.fileContent('router.js', '\nFlowRouter.route(\'/\', {\n    action: () => {\n\tBlazeLayout.render(\'mainLayout\', {\n\t    content: \'home\'\n\t});\n    }\n});\n\nFlowRouter.route(\'/posts/:postId\', {\n    action: (params) => {\n        BlazeLayout.render(\'mainLayout\', {\n          content: \'posts\',\n          params: params\n        });\n    }\n});\n\n');
+                assert.fileContent(
+                    'router.js',
+                    readFixture('router-with-params.js'));
 
-                assert.file([
+                assert.fileContent(
                     'client/templates/posts.html',
+                    readFixture('posts.html'));
+
+                assert.fileContent(
                     'client/templates/posts.js',
-                    'collections.js'
-                ]);
+                    readFixture('posts-with-params.js'));
 
-                assert.fileContent('client/templates/posts.js', '\nTemplate.posts.onCreated(function(){\n\n\n  \n  this.autorun(() => {\n    this.subscribe(\'posts\', Template.currentData().params);\n  });\n  \n\n\n});\n\nTemplate.posts.helpers({\n\n\n  postsItem: () => {\n    return Posts.findOne({});\n  }\n\n\n});\n');
-
-                var collectionsScript = fs.readFileSync('collections.js').toString();
-                chai.assert.include(collectionsScript, 'Posts = new Mongo.Collection(\'posts\');');
+                assert.fileContent(
+                    'collections.js',
+                    'Posts = new Mongo.Collection(\'posts\');');
 
                 done();
             });

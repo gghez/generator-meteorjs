@@ -1,6 +1,5 @@
-
 FlowRouter.route '<%= path %>',
-  action: (params) ->
+  action: <% if (hasParams) { %>(params) <%}%>->
     BlazeLayout.render 'mainLayout',
       content: '<%= template %>'
-      params: params
+<% if (hasParams) { %>      params: params<%}%>

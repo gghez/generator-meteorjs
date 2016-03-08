@@ -1,6 +1,10 @@
-var _ = require('underscore');
+var _ = require('lodash');
 
 module.exports = {
+
+    init: function() {
+        this.step1('Custom configuration');
+    },
 
     language: function() {
         this.questions.push({

@@ -8,10 +8,8 @@ describe('yo meteorjs', () => {
 
     describe('--packages', () => {
 
-        var generator;
-
         before((done) => {
-            helpers.run(path.join(__dirname, '../generators/app'))
+            helpers.run(path.join(__dirname, '..', 'generators', 'app'))
                 .withOptions({
                     packages: 'reader,core',
                 })
@@ -22,7 +20,6 @@ describe('yo meteorjs', () => {
                     accounts: [],
                     language: 'js'
                 })
-                .on('ready', (_) => generator = _)
                 .on('end', done);
         });
 
@@ -43,7 +40,7 @@ describe('yo meteorjs', () => {
     describe('--<question_override>', () => {
 
         before((done) => {
-            helpers.run(path.join(__dirname, '../generators/app'))
+            helpers.run(path.join(__dirname, '..', 'generators', 'app'))
                 .withOptions({
                     coffee: true,
                     styles: 'less',
@@ -61,135 +58,111 @@ describe('yo meteorjs', () => {
         });
 
         it('--coffee', () => {
-            var content = fs.readFileSync('.meteor/packages').toString();
-            chai.assert.include(content, 'coffeescript\n');
+            assert.fileContent('.meteor/packages', 'coffeescript\n');
 
             assert.file('client/index.coffee');
             assert.noFile('client/index.js');
         });
 
         it('--styles less', () => {
-            var content = fs.readFileSync('.meteor/packages').toString();
-            chai.assert.include(content, 'less\n');
+            assert.fileContent('.meteor/packages', 'less\n');
 
             var projectName = process.cwd().split(path.sep).pop();
             assert.file(`client/${projectName}.less`);
 
-            assert.noFile(projectName + '.css');
+            assert.noFile(`${projectName}.css`);
+            assert.noFile(`client/${projectName}.css`);
 
         });
 
         it('--router', () => {
-            var content = fs.readFileSync('.meteor/packages').toString();
-            chai.assert.include(content, 'kadira:flow-router\n');
-            chai.assert.include(content, 'kadira:blaze-layout\n');
+            assert.fileContent('.meteor/packages', 'kadira:flow-router\n');
+            assert.fileContent('.meteor/packages', 'kadira:blaze-layout\n');
 
-            assert.file('router.coffee');
+            assert.fileContent('router.coffee', readFixture('router-default.coffee'));
         });
 
         it('--secure', () => {
-            var content = fs.readFileSync('.meteor/packages').toString();
-            chai.assert.notInclude(content, 'insecure\n');
-            chai.assert.notInclude(content, 'autopublish\n');
+            assert.noFileContent('.meteor/packages', 'insecure\n');
+            assert.noFileContent('.meteor/packages', 'autopublish\n');
         });
 
     });
 
-    describe('default install', () => {
+    describe('Generated content', () => {
 
-        var checkMeteorDependencies = () => {
-            var content = fs.readFileSync('.meteor/packages').toString();
-
-            chai.assert.include(content, 'kadira:flow-router\n');
-            chai.assert.include(content, 'kadira:blaze-layout\n');
-            chai.assert.include(content, 'accounts-password\n');
-            chai.assert.include(content, 'accounts-ui\n');
-            chai.assert.include(content, 'less\n');
-
-            chai.assert.notInclude(content, 'insecure\n');
-            chai.assert.notInclude(content, 'autopublish\n');
-            chai.assert.notInclude(content, 'coffeescript\n');
-        };
-
-        var shouldIncludeFiles = () => {
-            assert.file([
-                'client/layout.html',
-                'client/index.js',
-                'router.js',
-                '.meteor',
-                '.travis.yml'
-            ]);
-        };
-
-        var travisCheck = () => {
-            assert.fileContent('.travis.yml', '');
-        };
-
-        var shouldExcludeFiles = () => {
-            assert.noFile([
-                'client/index.coffee',
-                'client/*.css',
-                '*.css',
-                'router.coffee',
-                'packages'
-            ]);
-        };
-
-        describe('without name argument', () => {
-
-            before((done) => {
-                helpers.run(path.join(__dirname, '../generators/app'))
-                    .withPrompts({
-                        flowrouter: true,
-                        remove_defaults: ['insecure', 'autopublish'],
-                        styles: 'less',
-                        accounts: ['accounts-password', 'accounts-ui'],
-                        language: 'js'
-                    })
-                    .on('end', done);
-            });
-
-            it('Project file structure does include', () => {
-                shouldIncludeFiles();
-
-                var projectName = process.cwd().split(path.sep).pop();
-                assert.file(`client/${projectName}.less`);
-            });
-
-            it('Project file structure does not include', shouldExcludeFiles);
-
-            it('Meteor dependencies', checkMeteorDependencies);
-
-            it('.travis.yml', travisCheck);
-
+        before((done) => {
+            helpers.run(path.join(__dirname, '..', 'generators', 'app'))
+                .withPrompts({
+                    flowrouter: true,
+                    remove_defaults: ['insecure', 'autopublish'],
+                    styles: 'less',
+                    accounts: ['accounts-password', 'accounts-ui'],
+                    language: 'js'
+                })
+                .on('end', done);
         });
 
-        describe('with name argument', () => {
+        it('client/<project>.less', () => {
+            var projectName = process.cwd().split(path.sep).pop();
+            assert.file(`client/${projectName}.less`);
+        });
 
-            before((done) => {
-                helpers.run(path.join(__dirname, '../generators/app'))
-                    .withArguments('aproject')
-                    .withPrompts({
-                        flowrouter: true,
-                        remove_defaults: ['insecure', 'autopublish'],
-                        styles: 'less',
-                        accounts: ['accounts-password', 'accounts-ui'],
-                        language: 'js'
-                    })
-                    .on('end', done);
-            });
+        it('Meteor dependencies', () => {
+            assert.fileContent('.meteor/packages', 'kadira:flow-router\n');
+            assert.fileContent('.meteor/packages', 'kadira:blaze-layout\n');
+            assert.fileContent('.meteor/packages', 'accounts-password\n');
+            assert.fileContent('.meteor/packages', 'accounts-ui\n');
+            assert.fileContent('.meteor/packages', 'less\n');
 
-            it('file structure does include', () => {
-                shouldIncludeFiles();
-                assert.file('client/aproject.less');
-            });
+            assert.noFileContent('.meteor/packages', 'insecure\n');
+            assert.noFileContent('.meteor/packages', 'autopublish\n');
+            assert.noFileContent('.meteor/packages', 'coffeescript\n');
+        });
 
-            it('file structure does not include', shouldExcludeFiles);
+        it('client/layout.html', () => {
+            assert.fileContent(
+                'client/layout.html',
+                readFixture('layout-accounts-ui.html'));
+        });
 
-            it('Meteor dependencies', checkMeteorDependencies);
+        it('client/index.js', () => {
+            assert.fileContent(
+                'client/index.js',
+                readFixture('client-index.js'));
+        });
 
-            it('.travis.yml', travisCheck);
+        it('router.js', () => {
+            assert.fileContent(
+                'router.js',
+                readFixture('router-default.js'));
+        });
 
+        it('.travis.yml', () => {
+            assert.fileContent(
+                '.travis.yml',
+                readFixture('.travis.yml'));
+        });
+
+        it('with name argument', (done) => {
+            helpers.run(path.join(__dirname, '..', 'generators', 'app'))
+                .withArguments('aproject')
+                .withPrompts({
+                    flowrouter: true,
+                    remove_defaults: [],
+                    styles: '<none>',
+                    accounts: [],
+                    language: 'js'
+                })
+                .on('end', () => {
+                    // Current directory name is name argument
+                    chai.assert.equal(process.cwd().split(path.sep).pop(), 'aproject');
+
+                    // Default stylesheet is moved to client/ subfolder
+                    assert.file('client/aproject.css');
+
+                    done();
+                });
         });
 
     });

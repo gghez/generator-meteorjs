@@ -1,7 +1,5 @@
-var generators = require('yeoman-generator'),
+var MeteorJSGenerator = require('../generator-base'),
     path = require('path'),
-    MeteorJSGenerator = require('../generator-base'),
-    _ = require('underscore'),
     fs = require('fs');
 
 module.exports = MeteorJSGenerator.extend({
@@ -20,10 +18,12 @@ module.exports = MeteorJSGenerator.extend({
         this.option('router', { desc: 'Enable FlowRouter support for application.', type: Boolean });
         this.option('styles', { desc: 'Specify a styles generator for application (less, fourseven:scss...).', type: String });
         this.option('secure', { desc: 'Remove "insecure" and "autopublish" default packages.', type: Boolean });
-        this.option('verbose', { desc: 'Increase verbosity of processing stages.', type: Boolean});
+        this.option('verbose', { desc: 'Increase verbosity of processing stages.', type: Boolean });
     },
 
     initializing: function() {
+        this.step1('Initialization');
+
         this.appName = this.name || process.cwd().split(path.sep).pop();
 
         if (this.name) {

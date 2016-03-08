@@ -1,9 +1,8 @@
 <template name="mainLayout">
     <body>
         <header>
-<% if (should.accounts.indexOf('accounts-ui') != -1) { %>
-          {{> loginButtons }}
-<% } %>
+
+
         </header>
         <main>
             {{> Template.dynamic template=content }}

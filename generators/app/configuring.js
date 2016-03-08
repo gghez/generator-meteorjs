@@ -1,3 +1,5 @@
+var _ = require('lodash');
+
 module.exports = {
 
     language: function() {
@@ -7,7 +9,7 @@ module.exports = {
     styles: function() {
         if (this.should.styles == 'less') {
             this.styleSuffix = '.less';
-        } else if (this.should.styles.indexOf('scss')) {
+        } else if (_.includes(this.should.styles, 'scss')) {
             this.styleSuffix = '.scss'
         } else {
             this.styleSuffix = '.css';

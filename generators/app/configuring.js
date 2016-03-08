@@ -1,6 +1,9 @@
 var _ = require('lodash');
 
 module.exports = {
+    init: function() {
+        this.step1('Configuration');
+    },
 
     language: function() {
         this.scriptSuffix = '.' + this.should.language;

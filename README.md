@@ -89,26 +89,35 @@ yo meteorjs myblog --router --packages reader,writer,core
 yo meteorjs:route /posts --template postList
 ```
 
-This structure is created:
+This structure is created (`$ tree .`):
 
 ```
-/ myblog
-.../ .meteor
-.../ packages
-   .../reader
-      .../ package.js
-      .../ core.js
-      .../ core-tests.js
-      .../ README.md
-   .../writer (same as reader)
-   .../core (same as reader)
-.../ client
-   .../ myblog.css
-   .../ index.js
-   .../ index.html
-   .../ templates
-      .../ postList.html
-.../ router.js
+├── client
+│   ├── head.html
+│   ├── index.js
+│   ├── layout.html
+│   ├── myblog.less
+│   └── templates
+│       ├── postList.html
+│       └── postList.js
+├── collections.js
+├── packages
+│   ├── core
+│   │   ├── README.md
+│   │   ├── core-tests.js
+│   │   ├── core.js
+│   │   └── package.js
+│   ├── reader
+│   │   ├── README.md
+│   │   ├── package.js
+│   │   ├── reader-tests.js
+│   │   └── reader.js
+│   └── writer
+│       ├── README.md
+│       ├── package.js
+│       ├── writer-tests.js
+│       └── writer.js
+└── router.js
 ```
 
 ### File contents

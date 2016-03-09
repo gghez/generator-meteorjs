@@ -24,12 +24,12 @@ describe.only('yo meteorjs', () => {
         });
 
         it('Packages file structure', () => {
-            assert.file('packages/reader/package.js');
-            assert.file('packages/core/package.js');
+            assert.file(path.join('packages', 'reader', 'package.js'));
+            assert.file(path.join('packages', 'core', 'package.js'));
         });
 
         it('Application reference user packages', () => {
-            var content = fs.readFileSync('.meteor/packages').toString();
+            var content = fs.readFileSync(path.join('.meteor', 'packages')).toString();
 
             chai.assert.include(content, 'reader\n');
             chai.assert.include(content, 'core\n');
@@ -37,7 +37,7 @@ describe.only('yo meteorjs', () => {
 
     });
 
-    describe('--<question_override>', () => {
+    describe('Command line -- options', () => {
 
         before((done) => {
             helpers.run(path.join(__dirname, '..', 'generators', 'app'))
@@ -58,35 +58,35 @@ describe.only('yo meteorjs', () => {
         });
 
         it('--coffee', () => {
-            assert.fileContent('.meteor/packages', 'coffeescript\n');
+            assert.fileContent(path.join('.meteor', 'packages'), 'coffeescript\n');
 
-            assert.file('client/index.coffee');
-            assert.noFile('client/index.js');
+            assert.file(path.join('client', 'index.coffee'));
+            assert.noFile(path.join('client', 'index.js'));
         });
 
         it('--styles less', () => {
-            assert.fileContent('.meteor/packages', 'less\n');
+            assert.fileContent(path.join('.meteor', 'packages'), 'less\n');
 
             var projectName = process.cwd().split(path.sep).pop();
-            assert.file(`client/${projectName}.less`);
+            assert.file(path.join('client', `${projectName}.less`));
 
             assert.noFile(`${projectName}.css`);
-            assert.noFile(`client/${projectName}.css`);
+            assert.noFile(path.join('client', `${projectName}.css`));
 
         });
 
         it('--router', () => {
-            assert.fileContent('.meteor/packages', 'kadira:flow-router\n');
-            assert.fileContent('.meteor/packages', 'kadira:blaze-layout\n');
+            assert.fileContent(path.join('.meteor', 'packages'), 'kadira:flow-router\n');
+            assert.fileContent(path.join('.meteor', 'packages'), 'kadira:blaze-layout\n');
 
             assert.fileContent(
                 'router.coffee',
-                readFixture('coffee/router-default.coffee'));
+                readFixture(path.join('coffee', 'router-default.coffee')));
         });
 
         it('--secure', () => {
-            assert.noFileContent('.meteor/packages', 'insecure\n');
-            assert.noFileContent('.meteor/packages', 'autopublish\n');
+            assert.noFileContent(path.join('.meteor', 'packages'), 'insecure\n');
+            assert.noFileContent(path.join('.meteor', 'packages'), 'autopublish\n');
         });
 
     });
@@ -107,37 +107,37 @@ describe.only('yo meteorjs', () => {
 
         it('client/<project>.less', () => {
             var projectName = process.cwd().split(path.sep).pop();
-            assert.file(`client/${projectName}.less`);
+            assert.file(path.join('client', `${projectName}.less`));
         });
 
         it('Meteor dependencies', () => {
-            assert.fileContent('.meteor/packages', 'kadira:flow-router\n');
-            assert.fileContent('.meteor/packages', 'kadira:blaze-layout\n');
-            assert.fileContent('.meteor/packages', 'accounts-password\n');
-            assert.fileContent('.meteor/packages', 'accounts-ui\n');
-            assert.fileContent('.meteor/packages', 'less\n');
+            assert.fileContent(path.join('.meteor', 'packages'), 'kadira:flow-router\n');
+            assert.fileContent(path.join('.meteor', 'packages'), 'kadira:blaze-layout\n');
+            assert.fileContent(path.join('.meteor', 'packages'), 'accounts-password\n');
+            assert.fileContent(path.join('.meteor', 'packages'), 'accounts-ui\n');
+            assert.fileContent(path.join('.meteor', 'packages'), 'less\n');
 
-            assert.noFileContent('.meteor/packages', 'insecure\n');
-            assert.noFileContent('.meteor/packages', 'autopublish\n');
-            assert.noFileContent('.meteor/packages', 'coffeescript\n');
+            assert.noFileContent(path.join('.meteor', 'packages'), 'insecure\n');
+            assert.noFileContent(path.join('.meteor', 'packages'), 'autopublish\n');
+            assert.noFileContent(path.join('.meteor', 'packages'), 'coffeescript\n');
         });
 
         it('client/layout.html', () => {
             assert.fileContent(
-                'client/layout.html',
+                path.join('client', 'layout.html'),
                 readFixture('layout-accounts-ui.html'));
         });
 
         it('client/index.js', () => {
             assert.fileContent(
-                'client/index.js',
-                readFixture('js/client-index.js'));
+                path.join('client', 'index.js'),
+                readFixture(path.join('js', 'client-index.js')));
         });
 
         it('router.js', () => {
             assert.fileContent(
                 'router.js',
-                readFixture('js/router-default.js'));
+                readFixture(path.join('js', 'router-default.js')));
         });
 
         it('.travis.yml', () => {
@@ -161,7 +161,7 @@ describe.only('yo meteorjs', () => {
                     chai.assert.equal(process.cwd().split(path.sep).pop(), 'aproject');
 
                     // Default stylesheet is moved to client/ subfolder
-                    assert.file('client/aproject.css');
+                    assert.file(path.join('client', 'aproject.css'));
 
                     done();
                 });
@@ -178,7 +178,7 @@ describe.only('yo meteorjs', () => {
                 })
                 .on('end', () => {
                     assert.fileContent(
-                        'client/layout.html',
+                        path.join('client', 'layout.html'),
                         readFixture('layout-no-accounts-ui.html'));
 
                     done();

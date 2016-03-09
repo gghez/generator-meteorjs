@@ -24,6 +24,8 @@ describe('yo meteorjs', () => {
         });
 
         it('User packages are generated', () => {
+            // No need to check more than file existance,
+            // content obviously relies on meteor cli version.
             assert.file(path.join('packages', 'reader', 'package.js'));
             assert.file(path.join('packages', 'core', 'package.js'));
         });

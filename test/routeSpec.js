@@ -6,7 +6,7 @@ var helpers = require('yeoman-test'),
     _ = require('lodash');
 
 describe('yo meteorjs:route', () => {
-    _.each(['js'], (lng) => {
+    _.each(['js', 'coffee'], (lng) => {
         describe(`(language: ${lng})`, () => {
             var appDir = null;
 

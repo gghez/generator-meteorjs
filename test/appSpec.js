@@ -4,14 +4,14 @@ var helpers = require('yeoman-test'),
     chai = require('chai'),
     fs = require('fs');
 
-describe('yo meteorjs', () => {
+describe.only('yo meteorjs', () => {
 
     describe('--packages', () => {
 
         before((done) => {
             helpers.run(path.join(__dirname, '..', 'generators', 'app'))
                 .withOptions({
-                    packages: 'reader,core',
+                    packages: 'reader,core'
                 })
                 .withPrompts({
                     flowrouter: false,
@@ -79,7 +79,9 @@ describe('yo meteorjs', () => {
             assert.fileContent('.meteor/packages', 'kadira:flow-router\n');
             assert.fileContent('.meteor/packages', 'kadira:blaze-layout\n');
 
-            assert.fileContent('router.coffee', readFixture('router-default.coffee'));
+            assert.fileContent(
+                'router.coffee',
+                readFixture('coffee/router-default.coffee'));
         });
 
         it('--secure', () => {
@@ -129,13 +131,13 @@ describe('yo meteorjs', () => {
         it('client/index.js', () => {
             assert.fileContent(
                 'client/index.js',
-                readFixture('client-index.js'));
+                readFixture('js/client-index.js'));
         });
 
         it('router.js', () => {
             assert.fileContent(
                 'router.js',
-                readFixture('router-default.js'));
+                readFixture('js/router-default.js'));
         });
 
         it('.travis.yml', () => {
@@ -160,6 +162,24 @@ describe('yo meteorjs', () => {
 
                     // Default stylesheet is moved to client/ subfolder
                     assert.file('client/aproject.css');
+
+                    done();
+                });
+        });
+
+        it('No accounts-ui main layout', (done) => {
+            helpers.run(path.join(__dirname, '..', 'generators', 'app'))
+                .withPrompts({
+                    flowrouter: false,
+                    remove_defaults: [],
+                    styles: '<none>',
+                    accounts: [],
+                    language: 'js'
+                })
+                .on('end', () => {
+                    assert.fileContent(
+                        'client/layout.html',
+                        readFixture('layout-no-accounts-ui.html'));
 
                     done();
                 });

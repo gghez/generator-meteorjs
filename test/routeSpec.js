@@ -2,135 +2,141 @@ var helpers = require('yeoman-test'),
     assert = require('yeoman-assert'),
     path = require('path'),
     chai = require('chai'),
-    fs = require('fs-extra');
+    fs = require('fs-extra'),
+    _ = require('lodash');
 
 describe('yo meteorjs:route', () => {
-    var appDir = null;
+    _.each(['js'], (lng) => {
+        describe(`(language: ${lng})`, () => {
+            var appDir = null;
 
-    before((done) => {
-        helpers.run(path.join(__dirname, '../generators/app'))
-            .inTmpDir((dir) => appDir = dir)
-            .withPrompts({
-                flowrouter: true,
-                remove_defaults: [],
-                styles: '<none>',
-                accounts: [],
-                language: 'js'
-            })
-            .on('end', done);
-    });
-
-    it('default parameters', (done) => {
-        helpers.run(path.join(__dirname, '../generators/route'))
-            .inTmpDir((dir) => {
-                fs.copySync(appDir, dir);
-            })
-            .withArguments('/posts')
-            .on('end', () => {
-
-                assert.fileContent(
-                    'router.js',
-                    readFixture('router-no-params.js'));
-
-                assert.fileContent(
-                    'client/templates/posts.html',
-                    readFixture('posts.html'));
-
-                assert.fileContent(
-                    'client/templates/posts.js',
-                    readFixture('posts-no-params.js'));
-
-                assert.fileContent(
-                    'collections.js',
-                    'Posts = new Mongo.Collection(\'posts\');');
-
-                done();
+            before((done) => {
+                helpers.run(path.join(__dirname, '../generators/app'))
+                    .inTmpDir((dir) => appDir = dir)
+                    .withPrompts({
+                        flowrouter: true,
+                        remove_defaults: [],
+                        styles: '<none>',
+                        accounts: [],
+                        language: lng
+                    })
+                    .on('end', done);
             });
-    });
 
-    it('--collection', (done) => {
-        helpers.run(path.join(__dirname, '../generators/route'))
-            .inTmpDir((dir) => {
-                fs.copySync(appDir, dir);
-            })
-            .withArguments('/posts')
-            .withOptions({ collection: 'theposts' })
-            .on('end', () => {
+            var copyApp = (dir) => fs.copySync(appDir, dir);
 
-                assert.fileContent(
-                    'router.js',
-                    readFixture('router-no-params.js'));
+            it('default parameters', (done) => {
+                helpers.run(path.join(__dirname, '../generators/route'))
+                    .inTmpDir(copyApp)
+                    .withArguments('/posts')
+                    .on('end', () => {
 
-                assert.fileContent(
-                    'client/templates/posts.html',
-                    readFixture('posts.html'));
+                        assert.fileContent([
+                            [`router.${lng}`, readFixture(`${lng}/router-no-params.${lng}`)],
+                            ['client/templates/posts.html', readFixture('posts.html')],
+                            [`client/templates/posts.${lng}`, readFixture(`${lng}/posts-no-params.${lng}`)],
+                            [`collections.${lng}`, readFixture(`${lng}/collection-entry.${lng}`)]
+                        ]);
 
-                assert.fileContent(
-                    'client/templates/posts.js',
-                    readFixture('posts-no-params-collection.js'));
-
-                assert.fileContent(
-                    'collections.js',
-                    'Theposts = new Mongo.Collection(\'theposts\');');
-
-                done();
+                        done();
+                    });
             });
-    });
 
-    it('--template', (done) => {
-        helpers.run(path.join(__dirname, '../generators/route'))
-            .inTmpDir((dir) => {
-                fs.copySync(appDir, dir);
-            })
-            .withArguments('/posts')
-            .withOptions({ template: 'postList' })
-            .on('end', () => {
+            it('--collection', (done) => {
+                helpers.run(path.join(__dirname, '../generators/route'))
+                    .inTmpDir(copyApp)
+                    .withArguments('/posts')
+                    .withOptions({ collection: 'theposts' })
+                    .on('end', () => {
 
-                assert.fileContent(
-                    'router.js',
-                    readFixture('router-no-params-template.js'));
+                        assert.fileContent([
+                            [`router.${lng}`, readFixture(`${lng}/router-no-params.${lng}`)],
+                            ['client/templates/posts.html', readFixture('posts.html')],
+                            [`client/templates/posts.${lng}`, readFixture(`${lng}/posts-no-params-collection.${lng}`)],
+                            [`collections.${lng}`, readFixture(`${lng}/collection-entry-override.${lng}`)]
+                        ]);
 
-                assert.fileContent(
-                    'client/templates/postList.html',
-                    readFixture('posts-template.html'));
-
-                assert.fileContent(
-                    'client/templates/postList.js',
-                    readFixture('posts-no-params-template.js'));
-
-                assert.fileContent(
-                    'collections.js',
-                    'Posts = new Mongo.Collection(\'posts\');');
-
-                done();
+                        done();
+                    });
             });
-    });
 
-    it('parameterized /path', (done) => {
-        helpers.run(path.join(__dirname, '../generators/route'))
-            .inTmpDir((dir) => {
-                fs.copySync(appDir, dir);
-            })
-            .withArguments('/posts/:postId')
-            .on('end', () => {
+            it('--template', (done) => {
+                helpers.run(path.join(__dirname, '../generators/route'))
+                    .inTmpDir(copyApp)
+                    .withArguments('/posts')
+                    .withOptions({ template: 'postList' })
+                    .on('end', () => {
 
-                assert.fileContent(
-                    'router.js',
-                    readFixture('router-with-params.js'));
+                        assert.fileContent([
+                            [`router.${lng}`, readFixture(`${lng}/router-no-params-template.${lng}`)],
+                            ['client/templates/postList.html', readFixture('posts-template.html')],
+                            [`client/templates/postList.${lng}`, readFixture(`${lng}/posts-no-params-template.${lng}`)],
+                            [`collections.${lng}`, readFixture(`${lng}/collection-entry.${lng}`)]
+                        ]);
 
-                assert.fileContent(
-                    'client/templates/posts.html',
-                    readFixture('posts.html'));
-
-                assert.fileContent(
-                    'client/templates/posts.js',
-                    readFixture('posts-with-params.js'));
-
-                assert.fileContent(
-                    'collections.js',
-                    'Posts = new Mongo.Collection(\'posts\');');
-
-                done();
+                        done();
+                    });
             });
+
+            it('--template and --collection', (done) => {
+                helpers.run(path.join(__dirname, '../generators/route'))
+                    .inTmpDir(copyApp)
+                    .withArguments('/posts')
+                    .withOptions({
+                        template: 'postList',
+                        collection: 'theposts'
+                    })
+                    .on('end', () => {
+
+                        assert.fileContent([
+                            [`router.${lng}`, readFixture(`${lng}/router-no-params-template.${lng}`)],
+                            ['client/templates/postList.html', readFixture('posts-template.html')],
+                            [`client/templates/postList.${lng}`, readFixture(`${lng}/posts-no-params-template-collection.${lng}`)],
+                            [`collections.${lng}`, readFixture(`${lng}/collection-entry-override.${lng}`)]
+                        ]);
+
+                        done();
+                    });
+            });
+
+            it('parameterized /path', (done) => {
+                helpers.run(path.join(__dirname, '../generators/route'))
+                    .inTmpDir(copyApp)
+                    .withArguments('/posts/:postId')
+                    .on('end', () => {
+
+                        assert.fileContent([
+                            [`router.${lng}`, readFixture(`${lng}/router-with-params.${lng}`)],
+                            [`client/templates/posts.html`, readFixture('posts.html')],
+                            [`client/templates/posts.${lng}`, readFixture(`${lng}/posts-with-params.${lng}`)],
+                            [`collections.${lng}`, readFixture(`${lng}/collection-entry.${lng}`)]
+                        ]);
+
+                        done();
+                    });
+            });
+
+            it('parameterized /path and --template', (done) => {
+                helpers.run(path.join(__dirname, '../generators/route'))
+                    .inTmpDir(copyApp)
+                    .withArguments('/posts/:postId')
+                    .withOptions({
+                        template: 'onePost'
+                    })
+                    .on('end', () => {
+
+                        assert.fileContent([
+                            [`router.${lng}`, readFixture(`${lng}/router-with-params-template.${lng}`)],
+                            ['client/templates/onePost.html', readFixture('posts-template-one.html')],
+                            [`client/templates/onePost.${lng}`, readFixture(`${lng}/posts-with-params-template.${lng}`)],
+                            [`collections.${lng}`, readFixture(`${lng}/collection-entry.${lng}`)]
+                        ]);
+
+                        done();
+                    });
+            });
+
+        });
+
     });
 });

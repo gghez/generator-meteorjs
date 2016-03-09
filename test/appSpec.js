@@ -4,7 +4,7 @@ var helpers = require('yeoman-test'),
     chai = require('chai'),
     fs = require('fs');
 
-describe.only('yo meteorjs', () => {
+describe('yo meteorjs', () => {
 
     describe('--packages', () => {
 
@@ -23,16 +23,14 @@ describe.only('yo meteorjs', () => {
                 .on('end', done);
         });
 
-        it('Packages file structure', () => {
+        it('User packages are generated', () => {
             assert.file(path.join('packages', 'reader', 'package.js'));
             assert.file(path.join('packages', 'core', 'package.js'));
         });
 
-        it('Application reference user packages', () => {
-            var content = fs.readFileSync(path.join('.meteor', 'packages')).toString();
-
-            chai.assert.include(content, 'reader\n');
-            chai.assert.include(content, 'core\n');
+        it('Application should reference user packages', () => {
+            assert.fileContent(path.join('.meteor', 'packages'), 'reader\n');
+            assert.fileContent(path.join('.meteor', 'packages'), 'core\n');
         });
 
     });

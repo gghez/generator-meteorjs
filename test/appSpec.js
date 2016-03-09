@@ -91,7 +91,7 @@ describe('yo meteorjs', () => {
 
     });
 
-    describe('Generated content', () => {
+    describe('Generated content (config #1)', () => {
 
         before((done) => {
             helpers.run(path.join(__dirname, '..', 'generators', 'app'))
@@ -105,11 +105,6 @@ describe('yo meteorjs', () => {
                 .on('end', done);
         });
 
-        it('client/<project>.less', () => {
-            var projectName = process.cwd().split(path.sep).pop();
-            assert.file(path.join('client', `${projectName}.less`));
-        });
-
         it('Meteor dependencies', () => {
             assert.fileContent(path.join('.meteor', 'packages'), 'kadira:flow-router\n');
             assert.fileContent(path.join('.meteor', 'packages'), 'kadira:blaze-layout\n');
@@ -117,9 +112,14 @@ describe('yo meteorjs', () => {
             assert.fileContent(path.join('.meteor', 'packages'), 'accounts-ui\n');
             assert.fileContent(path.join('.meteor', 'packages'), 'less\n');
 
-            assert.noFileContent(path.join('.meteor', 'packages'), 'insecure\n');
-            assert.noFileContent(path.join('.meteor', 'packages'), 'autopublish\n');
+            assert.noFileContent(path.join('.meteor', 'packages'), /\binsecure\b/);
+            assert.noFileContent(path.join('.meteor', 'packages'), /\autopublish\b/);
             assert.noFileContent(path.join('.meteor', 'packages'), 'coffeescript\n');
+        });
+
+        it('client/<project>.less', () => {
+            var projectName = process.cwd().split(path.sep).pop();
+            assert.file(path.join('client', `${projectName}.less`));
         });
 
         it('client/layout.html', () => {
@@ -145,46 +145,65 @@ describe('yo meteorjs', () => {
                 '.travis.yml',
                 readFixture('.travis.yml'));
         });
+    });
 
-        it('with name argument', (done) => {
+    describe('Generated content (config #2)', () => {
+
+        before((done)=> {
             helpers.run(path.join(__dirname, '..', 'generators', 'app'))
                 .withArguments('aproject')
-                .withPrompts({
-                    flowrouter: true,
-                    remove_defaults: [],
-                    styles: '<none>',
-                    accounts: [],
-                    language: 'js'
-                })
-                .on('end', () => {
-                    // Current directory name is name argument
-                    chai.assert.equal(process.cwd().split(path.sep).pop(), 'aproject');
-
-                    // Default stylesheet is moved to client/ subfolder
-                    assert.file(path.join('client', 'aproject.css'));
-
-                    done();
-                });
-        });
-
-        it('No accounts-ui main layout', (done) => {
-            helpers.run(path.join(__dirname, '..', 'generators', 'app'))
                 .withPrompts({
                     flowrouter: false,
                     remove_defaults: [],
                     styles: '<none>',
                     accounts: [],
-                    language: 'js'
+                    language: 'coffee'
                 })
-                .on('end', () => {
-                    assert.fileContent(
-                        path.join('client', 'layout.html'),
-                        readFixture('layout-no-accounts-ui.html'));
-
-                    done();
-                });
+                .on('end', done);
         });
 
+        it('Current directory has provided name argument', ()=> {
+            chai.assert.equal(process.cwd().split(path.sep).pop(), 'aproject');
+        });
+
+        it('CSS file is composed with project name', () => {
+            assert.file(path.join('client', 'aproject.css'));
+        });
+
+        it('No accounts-ui main layout', () => {
+            assert.fileContent(
+                path.join('client', 'layout.html'),
+                readFixture('layout-no-accounts-ui.html'));
+        });
+
+        it('Meteor dependencies', () => {
+            assert.noFileContent(path.join('.meteor', 'packages'), 'kadira:flow-router\n');
+            assert.noFileContent(path.join('.meteor', 'packages'), 'kadira:blaze-layout\n');
+            assert.noFileContent(path.join('.meteor', 'packages'), 'accounts-password\n');
+            assert.noFileContent(path.join('.meteor', 'packages'), 'accounts-ui\n');
+            assert.noFileContent(path.join('.meteor', 'packages'), 'less\n');
+
+            assert.fileContent(path.join('.meteor', 'packages'), /\binsecure\b/);
+            assert.fileContent(path.join('.meteor', 'packages'), /\bautopublish\b/);
+            assert.fileContent(path.join('.meteor', 'packages'), 'coffeescript\n');
+        });
+
+        it('client/index.coffee', () => {
+            assert.fileContent(
+                path.join('client', 'index.coffee'),
+                readFixture(path.join('coffee', 'client-index.coffee')));
+        });
+
+        it('router.coffee should not exist', () => {
+            assert.noFile('router.coffee');
+        });
+
+        it('.travis.yml', () => {
+            assert.fileContent(
+                '.travis.yml',
+                readFixture('.travis.yml'));
+        });
     });
+
 
 });

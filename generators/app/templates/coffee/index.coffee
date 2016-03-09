@@ -1,1 +1,1 @@
-# Default index template
+# Index default template
